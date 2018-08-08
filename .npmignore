@@ -1,6 +1,5 @@
 test/
 demo/
-.babelrc
 .eslintignore
 .eslintrc.js
 webpack.config.js
