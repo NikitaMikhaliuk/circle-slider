@@ -42,6 +42,12 @@ The constructor takes an optional second parameter which looks like this:
   // e.g. snap to every 45 degrees
   snap: Number,
 
+  // minimum angle to stop
+  minAngle: Number,
+
+  // maximum angle to stop
+  maxAngle: Number,
+
   // positive direction
   clockwise: Boolean,
 

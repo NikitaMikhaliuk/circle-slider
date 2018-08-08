@@ -6,16 +6,20 @@ class CircleSlider extends EventEmitter {
    * @param {String} targetId              The id of the element to contain the circle slider.
    * @param {Object} [options]             An object containing options for the slider.
    * @param {Number} [options.snap]        Makes the handle snap to every multiple of this number.
+   * @param {Number} [options.minAngle]    Minimum angle to be
+   * @param {Number} [options.maxAngle]    Maximum angle to be
    * @param {Boolean} [options.clockwise]  True to make clockwise the positive direction.
    * @param {"top"|"bottom"|"left"|"right"} [options.startPos]
    *    Which side the handle should start at.
    * @memberof CircleSlider
    */
-  constructor(targetId, options) {
+  constructor(targetId, options = {}) {
     super();
     // allow both "id" or "#id"
     this.root = document.getElementById(targetId) || document.getElementById(targetId.slice(1));
     this.outputAngle = 0;
+    this.minAngle = options.minAngle || 0;
+    this.maxAngle = options.maxAngle || 360;
 
     if (options) {
       this.clockwise = options.clockwise; // affects _formatOutputAngle
@@ -148,12 +152,16 @@ class CircleSlider extends EventEmitter {
       }
     }
 
-    // move the handle visually
-    this.hc.style.cssText = `transform: rotate(${angle}deg);`;
+    const outputAngle = this._formatOutputAngle(angle);
 
-    this.outputAngle = this._formatOutputAngle(angle);
+    if (outputAngle >= this.minAngle && outputAngle <= this.maxAngle) {
+      // move the handle visually
+      this.hc.style.cssText = `transform: rotate(${angle}deg);`;
 
-    this.emit(this.events.sliderMove, this.outputAngle);
+      this.outputAngle = outputAngle;
+
+      this.emit(this.events.sliderMove, this.outputAngle);
+    }
   }
 
   _formatOutputAngle(angle) {
