@@ -9,6 +9,7 @@
     "build": "babel src/index.js -o lib/index.js",
     "build:demo": "webpack",
     "prepublish": "npm run build",
+    "postinstall": "npm run build",
     "deploy": "gh-pages -d demo",
     "predeploy": "npm run build:demo"
   },
