@@ -10,6 +10,7 @@ class CircleSlider extends EventEmitter {
    * @param {Number} [options.maxAngle]    Maximum angle to be
    * @param {Boolean} [options.clockwise]  True to make clockwise the positive direction.
    * @param {"top"|"bottom"|"left"|"right"} [options.startPos]
+   * @param {Number}                        [options.startOffset]
    *    Which side the handle should start at.
    * @memberof CircleSlider
    */
@@ -21,30 +22,25 @@ class CircleSlider extends EventEmitter {
     this.minAngle = options.minAngle || 0;
     this.maxAngle = options.maxAngle || 360;
 
-    if (options) {
-      this.clockwise = options.clockwise; // affects _formatOutputAngle
-      this.snapMultiplier = options.snap;
-      this.startPos = options.startPos;
-    } else {
-      this.clockwise = false;
-      this.snapMultiplier = 0;
-      this.startPos = "right";
-    }
+    this.clockwise = options.clockwise || false; // affects _formatOutputAngle
+    this.snapMultiplier = options.snap || 0;
+    this.startPos = options.startPos || null;
+    this.startOffset = options.startOffset || 0;
 
-    this.startOffset = 0; // "right" is default
-
-    switch (this.startPos) {
-      case "top":
-        this.startOffset = 270;
-        break;
-      case "left":
-        this.startOffset = 180;
-        break;
-      case "bottom":
-        this.startOffset = 90;
-        break;
-      default:
-        break;
+    if (!this.startOffset && this.startPos) {
+        switch (this.startPos) {
+            case "top":
+                this.startOffset = 270;
+                break;
+            case "left":
+                this.startOffset = 180;
+                break;
+            case "bottom":
+                this.startOffset = 90;
+                break;
+            default:
+                break;
+        }
     }
 
     // validation
