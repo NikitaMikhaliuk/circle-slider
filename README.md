@@ -47,6 +47,9 @@ The constructor takes an optional second parameter which looks like this:
 
   // which position 0 degrees is
   startPos: "top"|"bottom"|"left"|"right",
+
+  // more accurate value of position than `startPos`
+  startOffset: Number,
 }
 ```
 I'll emphasize that `startPos` changes where 0 degrees is, so if you instead want, for example, 0 to be at the top, but want the slider to start at 90 degrees, you should call `setAngle(90)` (see below) after creating the slider.

@@ -8,39 +8,35 @@ class CircleSlider extends EventEmitter {
    * @param {Number} [options.snap]        Makes the handle snap to every multiple of this number.
    * @param {Boolean} [options.clockwise]  True to make clockwise the positive direction.
    * @param {"top"|"bottom"|"left"|"right"} [options.startPos]
+   * @param {Number}                        [options.startOffset]
    *    Which side the handle should start at.
    * @memberof CircleSlider
    */
-  constructor(targetId, options) {
+  constructor(targetId, options = {}) {
     super();
     // allow both "id" or "#id"
     this.root = document.getElementById(targetId) || document.getElementById(targetId.slice(1));
     this.outputAngle = 0;
 
-    if (options) {
-      this.clockwise = options.clockwise; // affects _formatOutputAngle
-      this.snapMultiplier = options.snap;
-      this.startPos = options.startPos;
-    } else {
-      this.clockwise = false;
-      this.snapMultiplier = 0;
-      this.startPos = "right";
-    }
+    this.clockwise = options.clockwise || false; // affects _formatOutputAngle
+    this.snapMultiplier = options.snap || 0;
+    this.startPos = options.startPos || null;
+    this.startOffset = options.startOffset || 0;
 
-    this.startOffset = 0; // "right" is default
-
-    switch (this.startPos) {
-      case "top":
-        this.startOffset = 270;
-        break;
-      case "left":
-        this.startOffset = 180;
-        break;
-      case "bottom":
-        this.startOffset = 90;
-        break;
-      default:
-        break;
+    if (!this.startOffset && this.startPos) {
+        switch (this.startPos) {
+            case "top":
+                this.startOffset = 270;
+                break;
+            case "left":
+                this.startOffset = 180;
+                break;
+            case "bottom":
+                this.startOffset = 90;
+                break;
+            default:
+                break;
+        }
     }
 
     // validation
