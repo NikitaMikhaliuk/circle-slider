@@ -7,8 +7,7 @@ class CircleSlider extends EventEmitter {
    * @param {Object} [options]             An object containing options for the slider.
    * @param {Number} [options.snap]        Makes the handle snap to every multiple of this number.
    * @param {Boolean} [options.clockwise]  True to make clockwise the positive direction.
-   * @param {"top"|"bottom"|"left"|"right"} [options.startPos]
-   * @param {Number}                        [options.startOffset]
+   * @param {Number|"top"|"bottom"|"left"|"right"} [options.startPos]
    *    Which side the handle should start at.
    * @memberof CircleSlider
    */
@@ -20,21 +19,26 @@ class CircleSlider extends EventEmitter {
 
     this.clockwise = options.clockwise || false; // affects _formatOutputAngle
     this.snapMultiplier = options.snap || 0;
-    this.startPos = options.startPos || null;
-    this.startOffset = options.startOffset || 0;
+    this.startOffset = 0;
 
-    if (!this.startOffset && this.startPos) {
-        switch (this.startPos) {
+    if (options.startPos) {
+        switch (options.startPos) {
             case "top":
                 this.startOffset = 270;
                 break;
             case "left":
                 this.startOffset = 180;
                 break;
+            case "right":
+                this.startOffset = 0;
+                break;
             case "bottom":
                 this.startOffset = 90;
                 break;
             default:
+                if (typeof options.startPos === "number") {
+                    this.startOffset = options.startPos;
+                }
                 break;
         }
     }
