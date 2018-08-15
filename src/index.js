@@ -17,9 +17,9 @@ class CircleSlider extends EventEmitter {
     super();
     // allow both "id" or "#id"
     this.root = document.getElementById(targetId) || document.getElementById(targetId.slice(1));
-    this.outputAngle = 0;
     this.minAngle = options.minAngle || 0;
     this.maxAngle = options.maxAngle || 360;
+    this.outputAngle = this.minAngle || 0;
 
     if (options) {
       this.clockwise = options.clockwise; // affects _formatOutputAngle
@@ -76,6 +76,9 @@ class CircleSlider extends EventEmitter {
 
     // bind methods
     this._mouseMoveHandler = this._mouseMoveHandler.bind(this);
+
+    // init a default position after accepting all the subscriptions
+    setTimeout(() => this.setAngle(this.outputAngle));
   }
 
   // public methods
