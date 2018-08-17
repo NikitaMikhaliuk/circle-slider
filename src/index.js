@@ -18,7 +18,7 @@ class CircleSlider extends EventEmitter {
     // allow both "id" or "#id"
     this.root = document.getElementById(targetId) || document.getElementById(targetId.slice(1));
     this.minAngle = options.minAngle || 0;
-    this.maxAngle = options.maxAngle || 360;
+    this.maxAngle = options.maxAngle || 359;
     this.outputAngle = this.minAngle || 0;
 
     if (options) {
@@ -100,8 +100,7 @@ class CircleSlider extends EventEmitter {
    * @memberof CircleSlider
    */
   setAngle(angle) {
-    const rawAngle = this._formatInputAngle(angle);
-    this._moveHandle(rawAngle);
+    this._moveHandle(angle);
   }
 
   _formatInputAngle(angle) {
@@ -141,30 +140,35 @@ class CircleSlider extends EventEmitter {
 
   _mouseMoveHandler(e) {
     e.preventDefault();
-    this._moveHandle(this._getRawAngle(e));
+    const angle = this._formatOutputAngle(this._getRawAngle(e));
+    this._moveHandle(angle);
   }
 
-  _moveHandle(rawAngle) {
-    let angle = rawAngle;
+  _moveHandle(angle) {
     // snap handle to multiples of snapMultiplier
     if (this.snapMultiplier) {
       const sm = this.snapMultiplier;
       const delta = Math.abs(angle - (Math.round(angle / sm) * sm));
       if (delta <= 5) {
-        angle = Math.round(angle / sm) * sm;
+        const angleSnapped = Math.round(angle / sm) * sm;
+        if (this._isAngleAvailable(angleSnapped)) {
+          angle = angleSnapped;
+        }
       }
     }
 
-    const outputAngle = this._formatOutputAngle(angle);
-
-    if (outputAngle >= this.minAngle && outputAngle <= this.maxAngle) {
+    if (this._isAngleAvailable(angle)) {
       // move the handle visually
-      this.hc.style.cssText = `transform: rotate(${angle}deg);`;
+      this.hc.style.cssText = `transform: rotate(${this._formatInputAngle(angle)}deg);`;
 
-      this.outputAngle = outputAngle;
+      this.outputAngle = angle;
 
       this.emit(this.events.sliderMove, this.outputAngle);
     }
+  }
+
+  _isAngleAvailable(angle) {
+    return angle >= this.minAngle && angle <= this.maxAngle;
   }
 
   _formatOutputAngle(angle) {
